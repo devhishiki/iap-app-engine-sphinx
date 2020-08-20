@@ -1,16 +1,31 @@
 version: 2.1
 
 jobs:
-  build-and-test:
+  build_and_deploy:
     docker:
-        - image: busybox
+        - image: google/cloud-sdk:slim
     steps:
+      - checkout
       - run:
-          name: Hello World
+          name: Install Sphinx
           command: |
-            echo "Hello World"
+            apt install -y python-pip && \
+            python3 -m pip install sphinx sphinx_rtd_theme
+      - run:
+          name: Build Docs
+          command: |
+            make html
+      - run:
+          name: Deploy to App Engine
+          command: |
+            echo ${GCLOUD_SERVICE_KEY} > /tmp/sa_key.json
+            gcloud auth activate-service-account --key-file=/tmp/sa_key.json
+            rm /tmp/sa_key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet app deploy
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build_and_deploy
