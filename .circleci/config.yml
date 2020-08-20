@@ -1,22 +1,21 @@
 version: 2.1
 
+orbs:
+  python: circleci/python@0.2.1
+
 jobs:
-  build_and_deploy:
-    docker:
-        - image: google/cloud-sdk:slim
+  build-and-test:
+    executor: python/default
     steps:
       - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
       - run:
-          name: Install Sphinx
-          command: |
-            apt install -y python-pip && \
-            python3 -m pip install -r requirements.txt
-      - run:
-          name: Make Docs
-          command: |
-            cd docs && make html
+          command: Hello World
+          name: Test
 
 workflows:
   main:
     jobs:
-      - build_and_deploy
+      - build-and-test
