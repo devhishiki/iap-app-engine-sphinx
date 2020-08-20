@@ -8,12 +8,11 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
       - run:
-          command: ./manage.py test
-          name: Test
+          name: Install Sphinx
+          command: |
+            apt install -y python-pip && \
+            python3 -m pip install -r requirements.txt
 
 workflows:
   main:
