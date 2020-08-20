@@ -1,20 +1,14 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
-
 jobs:
   build-and-test:
-    executor: python/default
+    docker:
+        - image: busybox
     steps:
-      - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
       - run:
-          command: |
-            echo "Hello World!"
           name: Hello World
+          command: |
+            echo "Hello World"
 
 workflows:
   main:
