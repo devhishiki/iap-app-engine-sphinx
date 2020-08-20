@@ -1,11 +1,9 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
-
 jobs:
-  build-and-test:
-    executor: python/default
+  build_and_deploy:
+    docker:
+        - image: google/cloud-sdk:slim
     steps:
       - checkout
       - run:
@@ -13,8 +11,12 @@ jobs:
           command: |
             apt install -y python-pip && \
             python3 -m pip install -r requirements.txt
+      - run:
+          name: Make Docs
+          command: |
+            cd docs && make html
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build_and_deploy
